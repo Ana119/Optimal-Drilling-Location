@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Dec 15 13:43:58 2022
+
+@author: user
+"""
+
 
 
 from sklearn.tree import DecisionTreeRegressor
@@ -9,15 +16,10 @@ from scipy.optimize import differential_evolution, brute, shgo, basinhopping
 # from niapy.algorithms.basic import GreyWolfOptimizer
 # from niapy.task import Task
 # import pygad
+from fireflyalgorithm import FireflyAlgorithm
 import pickle
 
-def train_depth_model():
-    X, y = get_depth_data()
-    model = DecisionTreeRegressor()
-    model.fit(X, y)
-    filename = 'train_depth_model.sav'
-    pickle.dump(model, open(filename, 'wb'))
-    return model
+
 
 def load_depth_model():
      model = pickle.load(open('train_depth_model.sav', 'rb'))
@@ -28,60 +30,6 @@ def load_water_model():
 def load_soil_model():
     model = pickle.load(open('train_soil_model.sav', 'rb'))
     return model
-    
-def train_water_model():
-    X, y = get_water_data()
-    model = DecisionTreeRegressor()
-    model.fit(X, y)
-    filename = 'train_water_model.sav'
-    pickle.dump(model, open(filename, 'wb'))
-    return model
-
-def train_soil_model():
-    X, y = get_soil_data()
-    model = DecisionTreeRegressor()
-    model.fit(X, y)
-    filename = 'train_soil_model.sav'
-    pickle.dump(model, open(filename, 'wb'))
-    return model
-
-def get_data():
-     data = pd.read_csv('D:\\Projects\\Drilling Project\\Classification Project\\Data\\all-features.csv')
-     max_value = data['total_depth'].max()
-     min_value = data['total_depth'].min()
-     data['total_depth'] = (data['total_depth'] - min_value) / (max_value - min_value)
-     return data
-     
-def get_depth_data():
-    data = get_data()
-    X = pd.DataFrame()
-    X['X'] = data['X']
-    X['Y'] = data['Y']
-    y = data['total_depth']
-    return X,y
-
-def get_water_data():
-    data = pd.read_csv('D:\\Projects\\Drilling Project\\Classification Project\\Data\\water_depth_data.csv')
-    X = pd.DataFrame()
-    X['X'] = data['X']
-    X['Y'] = data['Y']
-    y = data['Water_level']
-    return X,y
-
-def get_soil_data():
-    data = get_data()
-    X = pd.DataFrame()
-    X['X'] = data['X']
-    X['Y'] = data['Y']
-    soil_color = data['soil_color']
-    soil_color = np.array(soil_color)
-    soil_color = soil_color.reshape(-1,1)
-    oe = OrdinalEncoder()
-    oe.fit(soil_color)
-    soil_color = oe.transform(soil_color)
-    y = soil_color
-    data['soil_encoded'] = soil_color
-    return X,y
 
 def get_softness(position):
     softness = 0.001
@@ -125,17 +73,6 @@ def plot_Cost(depths,levels, softness, costs):
       plt.xlabel('Iterations', size=15)
       plt.legend(fontsize=12)
       fig = plt.figure(figsize=(8,4))
-      
-      # plt.plot(x_axis, levels, 'r', label="Test Water level", color = '#234518')
-      # plt.ylabel("X", size=15)
-      # plt.xlabel('Y', size=15)
-      # plt.legend(fontsize=12)
-      # fig = plt.figure(figsize=(8,4))
-      
-      # plt.plot(x_axis, softness, marker='.', label="Softness", color = 'red')
-      # plt.ylabel("Cost", size=15)
-      # plt.xlabel('Time step', size=15)
-      # plt.legend(fontsize=12)
       fig = plt.figure(figsize=(8,4))
       
       plt.plot(x_axis,  costs, marker='.', label="Cost", c = 'r')
@@ -153,6 +90,7 @@ def plot_Cost(depths,levels, softness, costs):
       #plt.title("TF Lite DNN for  ")
       plt.show()
       fig.savefig("Convergence.png", dpi = 600,bbox_inches='tight')
+      
 def plot2Axis(depths, levels):
     x_axis=[x for x in range(0,len(depths))]
     fig, ax1 = plt.subplots(figsize=(15,4))
@@ -172,6 +110,7 @@ def plot2Axis(depths, levels):
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
     plt.show()
     fig.savefig('multiaxis.pdf', dpi = 600)
+    
 def plot_positions(positions):
       fig = plt.figure(figsize=(8,4))
       positions = np.array(positions)
@@ -205,11 +144,11 @@ def objective(position):
     depth = get_depth(position)
     depth = 1/depth
     water_level = get_water_level(position)
-    #water_level = 1 - (1/water_level)
+    water_level = 1 - (1/water_level)
     soil_softness = get_softness(position)
-   # soil_softness = 1 - (1/soil_softness)
+    soil_softness = 1 - (1/soil_softness)
     cost = depth[0] + water_level[0] + soil_softness
-    if(water_level[0]<10):
+    if(water_level[0]<10):   # User Preferences 
         depths.append(depth[0])
         levels.append(water_level[0])
         softness.append(soil_softness)
@@ -220,11 +159,12 @@ model_depth = load_depth_model()
 model_water = load_water_model()
 model_soil = load_soil_model()
 
-x_range = [198733.589 , 202258.3361]
-y_range = [539535.0948, 545936.3696]
-bounds = [x_range, y_range]
+x_range = [198733.589 , 202258.3361] # Sample Test
+y_range = [539535.0948, 545936.3696] # Sample Test
+bounds = [x_range, y_range]   # Sample Test bounds
 
-result  = differential_evolution(objective,bounds)
+FA = FireflyAlgorithm()
+result = FA.run(function=objective, dim=2, lb=[x_range[0],y_range[0]], ub=[x_range[1],y_range[1]], max_evals=10000)
 plot_Cost(depths,levels,softness,costs)
 # plot2Axis(depths, levels)
 # plot_positions(positions)
