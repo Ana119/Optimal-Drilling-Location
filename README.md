@@ -8,14 +8,14 @@ Sustainable Groundwater Management".
 ## Experimental Environment
 python libraries, 
 including 
-NumPy, 
-SkLearn,
-Scipy,
-pandas
-matplotlib
-pickle
-seaborn
-xgboost
+- NumPy, 
+- SkLearn,
+- Scipy,
+- pandas
+- matplotlib
+- pickle
+- seaborn
+- xgboost
 
 ## Steps to build
 
