@@ -25,5 +25,5 @@ including
 - Optimization.py is a pythond scrip to find optimal location utilizing the above pretrained models in a given geographical area.
 
 
-## Archtecture of the drilling project
+## Architecture of the drilling project
 ![image](https://user-images.githubusercontent.com/106262211/214262805-4aca910c-ee57-49df-87d3-97a842aaeef7.png)
