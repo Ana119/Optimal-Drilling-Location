@@ -2,7 +2,7 @@
 
 
 ## Description
-This repository containt the code for the paper title "A New Method for Determination of Optimal Borehole Drilling Location Considering Drilling Cost Minimization and
+This repository contains the code for the paper title "A New Method for Determination of Optimal Borehole Drilling Location Considering Drilling Cost Minimization and
 Sustainable Groundwater Management".
 
 ## Experimental Environment
