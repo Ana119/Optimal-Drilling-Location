@@ -8,9 +8,9 @@ Sustainable Groundwater Management".
 ## Experimental Environment
 python libraries, 
 including 
-- NumPy, 
-- SkLearn,
-- Scipy,
+- NumPy 
+- SkLearn
+- Scipy
 - pandas
 - matplotlib
 - pickle
